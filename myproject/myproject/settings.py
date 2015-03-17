@@ -50,6 +50,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'myapp',
     'rest_framework',
+    'django_nose',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -65,7 +66,13 @@ MIDDLEWARE_CLASSES = (
 ROOT_URLCONF = 'myproject.urls'
 
 WSGI_APPLICATION = 'myproject.wsgi.application'
+TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 
+NOSE_ARGS = [
+    '--with-coverage',
+    '--cover-package=myapp',
+    '--cover-html',
+]
 
 # Database
 # https://docs.djangoproject.com/en/1.7/ref/settings/#databases

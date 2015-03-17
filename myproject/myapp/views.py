@@ -11,8 +11,12 @@ from django.views.decorators.csrf import csrf_exempt
 
 def index(request):
     return render_to_response('index.html')
-
-
+def coverage(request):
+    return render_to_response('coverage.html')
+def test(request):
+    return render_to_response('test.html')
+def cover(request):
+    return render_to_response('../cover/index.html');
 
 class UserViewSet(viewsets.ModelViewSet):
     """

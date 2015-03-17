@@ -13,6 +13,8 @@ urlpatterns = patterns('',
     # url(r'^blog/', include('blog.urls')),
 
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^coverage/', 'myapp.views.coverage'),
+    url(r'^test/', 'myapp.views.test'),
     url(r'^import', 'myapp.views.index'),
     url(r'^gmailContacts/$', views.contacts_list),
 #    url(r'^', include(router.urls)),
