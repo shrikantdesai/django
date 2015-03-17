@@ -1,0 +1,83 @@
+{% load staticfiles %}
+<html>
+  <head>
+    <link href="{% static 'bootstrap/css/bootstrap.min.css' %}"
+          rel="stylesheet" media="screen">
+<script src="https://apis.google.com/js/client.js?onload=OnLoadCallback"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+    <script>
+      function auth() {
+        var config = {
+          'client_id': '370120936407-b6sd2av91tsftuges164jvluddlopsra.apps.googleusercontent.com',
+          'scope': 'https://www.google.com/m8/feeds'
+        };
+        gapi.auth.authorize(config, function() {
+          fetch(gapi.auth.getToken());
+        });
+      }
+      function fetch(token) {
+        $.ajax({
+          url: 'https://www.google.com/m8/feeds/contacts/default/full?alt=json&max-results=50000',
+          dataType: 'json',
+          data: token
+        }).done(function(data) {
+		author=data.feed.author[0].email.$t;
+		$('#x').append('<p> Hello : '+author+'</p>');
+		$('#x').append('<p>'+data.feed.title.$t+' are imported here</p>');
+		data = data.feed.entry;
+		console.log(JSON.stringify(data));
+		count=0;
+		for (var i = 0, length = data.length; i < length; i++) {
+			if(!data[i].gd$email)
+			 continue;
+                        count++;	
+			emailid= data[i].gd$email[0].address;
+			input='{"user":"'+author+'","contacts":"'+emailid+'"}';
+			input=JSON.parse(input);
+   $.ajax({
+        url : "gmailContacts/", // the endpoint
+        type : "POST", // http method
+        data : input, // data sent with the post request
+
+        // handle a successful response
+        success : function(json) {
+      //      console.log(json); // log the returned json to the console
+       //     console.log("success"); // another sanity check
+        },
+
+        // handle a non-successful response
+        error : function(xhr,errmsg,err) {
+		count--;
+            $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
+                " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
+        //    console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+        }
+    });
+	//			$('#x').append('<p>'+i+'. '+data[i].title.$t+' ||'+data[i].gd$email[0].address+'</p>');
+		}
+		
+	 $('#x').append('<p>'+count+' contacts were imported</p>');	
+
+          });
+      }
+    </script>
+  </head>
+
+  <body>
+    {% block content %}
+<nav class="navbar navbar-inverse">
+      <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <a class="navbar-brand" href="#">Google Contacts Imports</a>
+        </div>
+	    <a style="float:right;" href="https://accounts.google.com/logout" >logout</a>
+      </div><!-- /.container-fluid -->
+    </nav>
+ <button onclick="auth();">GET CONTACTS FEED</button>
+<div id="x"></div>
+    {% endblock %}
+<!--     <script src="{% static 'js/jquery-1.11.2.js' %}"></script> -->
+    <script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
+  </body>
+</html>
